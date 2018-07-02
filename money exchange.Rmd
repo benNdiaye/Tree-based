@@ -7,15 +7,15 @@ header-includes:
 - \usepackage{rotating}
 - \usepackage{amsmath}
 output:
-  html_document:
-    df_print: paged
-    toc: yes
-    toc_depth: '6'
   pdf_document:
     keep_tex: yes
     number_sections: yes
     toc: yes
     toc_depth: 6
+  html_document:
+    df_print: paged
+    toc: yes
+    toc_depth: '6'
 fontsize: 11pt
 --- 
 
