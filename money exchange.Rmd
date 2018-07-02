@@ -1,0 +1,1064 @@
+---
+title: "Probabilité et Statistique"
+geometry: margin=1in
+header-includes:
+- \usepackage{pst-plot,pst-node,pst-tree,pst-grad,pst-coil,pst-eps,pst-fill,multido}
+- \usepackage{array}
+- \usepackage{rotating}
+- \usepackage{amsmath}
+output:
+  html_document:
+    df_print: paged
+    toc: yes
+    toc_depth: '6'
+  pdf_document:
+    keep_tex: yes
+    number_sections: yes
+    toc: yes
+    toc_depth: 6
+fontsize: 11pt
+--- 
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+  
+```{r, message=FALSE,echo=FALSE, warning=F}
+library(ggplot2)
+library(magrittr)
+library(rmarkdown)
+library(dplyr)
+library(tidyr)
+library(RColorBrewer)
+library(reshape2)
+library(ggthemes)
+library(MASS)
+library(viridis)
+library(GSIF)
+library(ggtern)
+library(geomnet)
+library(ggmap)
+library(ggfortify)
+library(vars)
+library(maps)
+library(rgdal)
+library(animation)
+library(FactoMineR)
+library(factoextra)
+library(class)
+library(combinat)
+library(grDevices)
+library(markovchain)
+library(igraph)
+library(diagram)
+library(stringr)
+```
+\newpage
+
+# Introduction  
+  
+L'homme à toujours utiliser un moyen d'échange à travers l'histoire. Ceci allant de la Troc aux objects (précieux)  d'échanges, jusqu'à aujourd'hui l'utilisation la monnaie comme moyen d'échanges garantie (en valeur) par les autorités publics. La quantité de la monnaie en circulation, tel qu'elle  soit, influe sur sa valeur (fiduciaire) à l'instant $t$. Le terme économique utilisé pour désigner la quantité de monnaie en circulation est appelée **Masse Monétaire**.  De fait  cette masse monétaire joue  sur le prix des biens et services , et peut être sources d'inflation (en cas d'augmentation de cette derniére), c'est à dire une hausse des prix du fait de la baisse de sa valeur . Mais  elle peut aussi être source de désinflation voir déflation (en Cas de baisse de cette derniére ) , c'est à dire une  baisse de croissance des prix voir une baisser des prix du fait de la hausse ainsi de sa valeur.  
+Toutefois en europe du faits de l'intégration à l'Union Européenne, les pays membres se voit des quotas de masse monétaire qui leurs sont attribués, En fonction de la conjoncture économiques à la laquelle ils font face.  De ce fait, La quantité de monnaie fabriquée varie d'un pays à l'autre. En outre de fait l'existence de la monnaie unique, le processus d'intégration aujourd'hui va de paire avec le libre échange. Ce qui rend le schéma plus complexe. En effet les pays membres, n'ayant pas les mêmes quantités de monnaies fabriquées , peuvent se retrouver en possession de monnaie originaires des autres pays voisins. Le defis aujourd'hui étant de trouver un moyen de pouvoir connaitre la masse monétaire en circulation qui est originaire du pays et la masse monétaire en circulation qui non originaire du pays. Car la monnaie est un levier en matiére de politique économique (plus précisement monétaire et financiaire), et permet d'agir sur la conjoncture économique (c'est à  dire l'actualité économique du pays), avec son effet autant sur le long terme que le court terme.  
+Le Principal  probléme aujourd'hui face à ce genre de défis est surtout dû au fait que les facteurs influants dans ce processus d'échanges ne sont pas totalement maitrises ou sont souvent des facteurs latentes (c'est à dire que l'on peut pas observer). En effet les facteurs comme la compétivité d'un pays à un autre que ce soit structurelles ou prix, ou les périodes de vacances... Sont des facteurs que l'on connait mais que l'on ne peut pas tout le temps maitriser.  
+Le deuxiéme principal probléme est ainsi lié au temps. En effet le temps étant continue, l'échange de monnaie se font la plupart du temps avec un décalage inter-temporels. Ce qui fait que la masse monétaire originaires en circulation dans un pays, n'explique pas forcément la quantité monnaie non originaires dans le même pays. Cela se comprend particuliérement, dans la mesure ou la quanttié de base dans chaque pays n'est jamais fixe même si les politiques au sain de l'Union Européenne tendent à exiger des critéres de convergences comme celui-ci.  
+  
+De ce fait nous essayerons à travers cette étude non pas d'expliquer ce processus d'échanges, mais surtout d'essayer de voir dans un cadre trés simple si l'on peu obtenir un équilibre statistique.  
+C'est à dire s'il existerait un temps $t$ à partir duquel pour tout échanges supplémentaires la masse monétaire originaire et la masse étrangére serait plus ou moins stable dans un pays.  
+
+
+
+\newpage
+  
+# Modélisation  
+
+## Processus avec N États  
+
+  
+
+Sous les hypothéses du processus d'échanges nous comprenons dés lors qu'il faut essayer  de voir comment ce systéme fonctionnerait avec plusieurs États (comme c'est le cas en réalité).  
+Supposons d'abord :  
+  
+* *N* états dans un processus d'échanges , avec *Q* la masse monétaire (totale) .  
+  
+* Le temp *t* est discret et *Q* est constant à travers le t  
+  
+* Un seul type de monnaie échangée ($1$ euro) .
+  
+Donc à chaque temps *t* nous avons:  
+
+  
+$$Q=\sum_1^N q_{i}$$  
+\begin{flushright}
+$q_{i}$ est la  de monnaie de L'état $i$ 
+\end{flushright}  
+
+États | temps 1|temps 2 |temps 3|..........
+------|--------|--------|-------|------------------------------------
+1     | $q_{1t_1}$|$q_{1t_2}$ |$q_{1t_3}$|.............  
+2     | $q_{2t_1}$|$q_{2t_2}$ |$q_{2t_3}$|...........  
+.     | .|. |.|.............  
+.    | .|. |.|..............
+.     | .|. |.|............  
+.     |.|. |. |............. 
+N     | $q_{Nt_1}$|$q_{Nt_2}$ |$q_{Nt_3}$|...............  
+------|--------|--------|----------------|---------------------------  
+Masse monétaire| Q=$\sum_1^Nq_{it_1}$|Q=$\sum_1^Nq_{it_2}$|Q=$\sum_1^Nq_{it_3}$|.............  
+  
+ la visualisation de ce genre de processus est complexe compte tenue des interactions qu'ils peuvent y avoir entre les états.  
+   
+## Processus à Deux États  
+
+### Chaine de Markov  
+
+Nous allons maintenant considérer un systéme d'échange à deux états. Nous conservons entre autre les hypothéses précédentes.  
+
+Soit :  
+  
+* **A** et **B** deux états.  
+  
+* Nous supposons le temps discret, $N_A$ et $N_B$ la quantité de monnaie respective à ces deux pays, avec $N_A \leq N_B$.  
+  
+* À chaque temps ($t \in \mathbb{N}$), nous avons ce phénoméne qui se produit :  
+  
+ 
+$$code 1$$  
+  
+* Soit $X(t)$ la variable aléatoire associée à l'évenement "la quantité de piéce de un euro dans A à l'instant t ", $\forall t\in \mathbb{N}$, $X(t)\in$ [0,$N_A$].  
+  
+$$code2$$  
+  
+
+Soit $k \in [1,N_A-1]$, soit $t \in \mathbb{N}$, À l'état $k$ (c'est à dire $X(t)=k$) :  
+  
+* Si $X(t+1)=k-1$ , alors  il y aura $k-1$ piéces de *1* euro de $A$   dans le pays $A$ . et il y aura $N_A-(k-1)$ piéces de *1* euro de $B$ dans $A$, car la piéce ayant quittée $A$ était de $A$ (avec probabibité $\frac{k}{N_A}$) et celle qui est arrivée dans $A$ était originaire de $B$ (avec probabilité $\frac{N_B-(N_A-k)}{N_B}$ ).  
+En sachant que les deux événements sont indépendants, donc la probabilité de transition est la suivante:  
+
+\begin{equation} 
+\begin{split}
+\mathbb{P}(X(t+1) =k-1|X(t)=k) &=\frac{k}{N_A}(\frac{N_B-(N_A-k)}{N_B} ) \\
+&=\frac{k}{N_A}(1-\frac{N_A}{N_B}+\frac{k}{N_B})\\
+&=\frac{k}{N_A}(1-\rho+\rho \frac{k}{N_A})  \\
+\end{split}
+\end{equation}  
+  
+\begin{flushright}
+*\emph{Avec $\rho=\frac{N_A}{N_B}$}
+\end{flushright}
+
+
+* Si $X(t+1)=k+1$, alors il y aura $k+1$  piéces de *1* euro de $A$ dans $A$ et $N_A-(k+1)$ piéces de *1* euro de $B$ dans $A$ , car la piéce ayant quittée $A$ était de $B$ (avec probabilité $\frac{N_A-k}{N_A}$) et celle qui est arrivée dans $A$ était originaire de $A$   (avec probabilité $\frac{N_A-k}{N_B}$).  
+  
+En sachant que dans cas aussi les deux événements sont indépendants, donc la probabilité de transition est la suivante:  
+\begin{equation} 
+\begin{split}
+\mathbb{P}(X(t+1) =k+1|X(t)=k) &=(\frac{N_A-k}{N_A})(\frac{N_A-k}{N_B})\\
+&=(1-\frac{k}{N_A})(\frac{N_A}{N_B}-\frac{k}{N_B})\\
+&=(1-\frac{k}{N_A})(\rho-\rho\frac{k}{N_A})\\
+&=\rho(1-\frac{k}{N_A})^2
+\end{split}
+\end{equation}  
+  
+
+  
+Si $X(t+1)=k$, alors il y aura $k$ piéces de *1* euro de $A$ dans $A$ et $N_A-k$ piéces de $B$ dans $A$. Dans ce cas il y a deux possibilité:  
+  
+- la piéce  ayant quittée $A$ était de $A$ (avec probabilité $\frac{k}{N_A}$)et celle arrivée dans
+  dans $A$ était originaire de $A$ (avec probabilité $\frac{N_A-k}{N_B}$).  
+  
+- Ou bien  la piéce ayant quitté $A$ était de $B$ (avec probabilité $\frac{N_A-k}{N_A}$) et celle qui est arrivée dans $A$ était originaire de $B$  (avec probabilité $\frac{N_B-(N_A-k)}{N_B}$).  
+  
+Et sachant que les événements sont deux à deux disjoints, la probabilité de transition est la suivante:  
+  
+
+\begin{equation} 
+\begin{split}
+\mathbb{P}(X(t+1) =k|X(t)=k)  
+&=(\frac{k}{N_A})(\frac{N_A-k}{N_B})+(\frac{N_A-k}{N_A})(\frac{N_B-(N_A-k)}{N_B})\\
+&=\frac{k}{N_A}\rho(1-\frac{k}{N_A})+(1-\frac{k}{N_A})(1+\rho+\rho\frac{k}{N_A})\\
+&=(1-\frac{k}{N_A})(1+\rho+2\rho\frac{k}{N_A})\\
+\end{split}
+\end{equation}  
+  
+  
+  
+  
+* Pour $X(t)=0$,  $\mathbb{P}(X(t+1)=1|X(t)=0)=1$. Et pour $X(t)=N_A$,        
+ $\mathbb{P}(X(t+1)=N_A-1|X(t)=N_A)=1$  
+  
+* Soit $j,i \in [0,N_A]$ tel que $|i-j|\geq 2$, $\mathbb{P}(X(t+1)=j|X(t)=i)=\mathbb{P}(X(t+1)=i|X(t)=j)=0$.  
+  
+Nous pouvons ainsi dire que la probabilité dans un état (de 0 à $N_A$) ne dépend que de l'état précedent dans notre modéle. Donc nous pouvons bien affirmer que l'on a une chaine de markov homogéne finie avec la matrice de transition suivante.
+  
+  
+
+
+
+$$
+\left(\begin{array}{cccccccccccccc}
+\\r_0&p_0&&&&&&&&&&&&\\  
+q_2&r_2&p_2&&&&&&&&&&&\\  
+&q_3&r_3&p_3&&&&&&&&&&\\  
+&&.&.&.&&&&&&&&&\\  
+&&&.&.&.&&&&&&(0)&&\\  
+&&&&.&.&.&&&&&&&\\  
+&&&&&.&.&.&&&&&&\\  
+&&&&&&q_k&r_k&p_k&&&&&\\  
+&&&&&&&.&.&.&&&&\\  
+&&&&&&&&.&.&.&&&\\  
+&&&(0)&&&&&&.&.&.&&\\  
+&&&&&&&&&&q_{N_A-1}&r_{N_A-1}&p_{N_A-1}&\\  
+&&&&&&&&&&&q_{N_A}&r_{N_A}&p_{N_A}\\
+\end{array}\right)$$ 
+
+
+  
+ Avec $\forall t \in \mathbb{N},\forall k \in [1,N_A-1]$:  
+ 
+  
+  \[ \Rightarrow \left\{
+  \begin{array}{rcr}
+  r_k=&\mathbb{P}(X(t+1)=k|X(t)=k)=&(1-\frac{k}{N_A})(1-\rho+2\rho\frac{k}{N_A})\\
+  p_k=&\mathbb{P}(X(t+1)=k+1|X(t)=k)=&\rho(1-\frac{k}{N_A})^2\\
+  q_k=&\mathbb{P}(X(t+1)=k-1|X(t)=k)=&\frac{k}{N_A}(1-\rho+\rho \frac{k}{N_A}) \\
+\end{array}
+\right.
+\]
+
+
+$r_0=r_N=0,q_{N_A-1}=p_0=1$  
+  
+Dans le cas ou $N_A=N_B=N$, entrainant $\rho=1$ ,nous avons :  
+
+  
+\[ \Rightarrow \left\{
+  \begin{array}{rcr}
+  r_k=&\mathbb{P}(X(t+1)=k|X(t)=k)=&\frac{2k}{N_A}(1-\frac{k}{N_A})\\
+  p_k=&\mathbb{P}(X(t+1)=k+1|X(t)=k)=&(1-\frac{k}{N_A})^2\\
+  q_k=& \mathbb{P}(X(t+1)=k-1|X(t)=k)=& (\frac{k}{N_A})^2\\
+\end{array}
+\right.
+\]
+  
+### Propriété de la chaine  
+
+• **Périodicité**  
+Soit $x \in E$ et $R(x)=\{t \in N^*, P^t(x,x)>0 \}$ , On appele période de $x$ le PGCD(R(X)) ,si la période est égale 1 alors la chaine est Apériodique.  
+Donc  la chaine etudié est Aperiodique.  
+  
+• **irréductible**  
+Car   pour tout $x, y\in[0,N_A]$ avec $|x-y|\leq 1$ nous avons $x R y$ et $yRx$  
+
+### Mesure invariante
+  
+Sachant que la chaine est homogéne finie irreductible et Apériodique un théoréme affirme qu'elle admet   
+une  mesure invariante  $\pi$ ,tel que $\pi=\pi P$, et pour toute mesure initiale $\mu$ et tout $k \in [0,N_A]$ , T assez grand :  
+$$\frac{1}{T}\sum_{t=0}^{T-1}\mathbb{1}_{\{X(t)=k\}} \Longrightarrow \pi(k) \hspace{20mm} (ps) $$
+
+
+ \[ \pi=\pi P \Rightarrow \left\{
+  \begin{array}{rcr}
+    \pi_0=&r_0\pi_0+q_1\pi_1 \\
+   \pi_1=&p_0\pi_0+r_1\pi_1+q_2\pi_2 \\
+   .\\
+   .\\
+   \pi_k=&p_{k-1}\pi_{k-1}+r_k+q_{k+1}\\
+   .\\
+   .\\
+   \pi_{N_A}=&p_{N_A-1}\pi_{N_A-1}+r_{N_A}+q_{N_A+1}
+  \end{array}
+\right.
+  \] 
+  \begin{flushright}
+  $r_k+p_k+q_k=1$
+  \end{flushright}
+  \[
+  \Rightarrow \left\{
+  \begin{array}{rcr}
+  (1-r_0)\pi_0=&q_1\pi_1\\
+  (1-q_1-r_1)\pi_1=&q_2\pi_2\\
+  ...&\\
+  ...&\\
+  (1-q_k-r_k)\pi_k=&q_{k+1}\pi_{k+1}\\
+    ...&\\
+  ...&\\
+  (1-q_{N_A-1}-r_{N_A-1})\pi_{N_A-1}=&q_{N_A}\pi_{N_A}
+  \end{array}
+  \right.
+  \Rightarrow \left\{ \begin{array}{rcr}
+  p_0\pi_0=&q_1\pi_1\\
+  p_1\pi_1=&q_2\pi_2\\
+  ...&\\
+  ...&\\
+  p_k\pi_k=&q_{k+1}\pi_{k+1}\\
+    ...&\\
+  ...&\\
+  p_{N_A-1}\pi_{N_A-1}=&q_{N_A}\pi_{N_A}
+  \end{array}
+  \right.
+  \]
+  
+En écrivant en fonction $\pi_0$  \[ 
+\Rightarrow \left\{ \begin{array}{rcr}
+  \pi_1=&\frac{p_0}{q_0}\pi_0\\
+  \pi_2=&\frac{p_0p_1}{q1q_2}\pi_0\\
+  ...&\\
+  ...&\\
+  p_k\pi_k=&\frac{p_{k-1}....p_0}{q_{k}....q_1}\pi_0\\
+    ...&\\
+  ..&\\
+  p_{N_A}\pi_{N_A}=&\frac{p_{N_A-1}...p_0}{q_{N_A}...q_1}\pi_{0}
+  \end{array}
+  \right. 
+  \]  
+  \begin{center}
+ Avec ,$ \sum_{k=0}^{N_A} \pi_k=1$
+  \end{center}  
+  
+  
+* Dans le cas ou $N_A=N_B=N$ nous avons :  
+  
+\[\pi_k=\frac{p_{k-1}....p_0}{q_{k}....q_1}\pi_0=\frac{\prod_0^k(\frac{N-k'+1}{N})^2}{\prod_1^k(\frac{k'}{N})^2}\pi0=\frac{\prod_0^k(N-k'+1)^2}{\prod_1^k k'^2}=\frac{(N!)^2}{k!^2(N-k)^2}\pi_0=\binom{N}{k}^2\pi_0
+\]  
+or $\sum_0^N\pi_k=1$ $\Rightarrow$ $\sum_0^N\binom{N}{k}^2\pi_0=\pi_0 \binom{2N}{N}=1$ $\Rightarrow$ $\pi_0=\binom{2N}{N}^{-1}$  
+  
+Donc :  
+  
+* $$\pi_k=\binom{N}{k}^2\pi_0=\frac{\binom{N}{k}^2}{\binom{2N}{N}}=\frac{\binom{N}{k}\binom{N}{N-k}}{\binom{2N}{N}}$$  
+  
+D'ailleurs cela correspond à une loi hypergéométrique de raison N, un équilibre avec  une répartition des piéces de $1$ euros aléatoire entre les deux états.
+  
+En translatant le probléme pour le cas $N_A \leq N_B$:  
+$$\Rightarrow \pi_k =\frac{p_{k-1}....p_0}{q_{k}....q_1}\pi_0=\frac{\rho^k\frac{1}{N_A^k}(N_A(N_A-1)...(N_A-(k-1)) )^2}{\frac{k!}{N_A^k}(1-\frac{N_A}{N_B}+\frac{k}{N_B}))....(1-\frac{N_A}{N_B}+\frac{1}{N_B})) }\pi_0\\=\frac{\rho^k \frac{N_A!^2}{(N_A-k)!^2} }{\frac{k!}{N_B^k}((N_B-(N_A-k))...(N_B-(N_A-1))}\pi_0 =$$  
+  
+$$= \frac{\rho^k \frac{N_A!^2}{(N_A-k)!^2 }}{ \frac{k!}{N_B^k} \frac{N_B!}{(N_B-N_A)!} }\pi_0=
+  \frac{N_A!^2}{(N_A-k)!^2} * \frac{1}{N_A^k k!}\frac{(N_B-N_A)!}{N_B!}\\
+   \approx \frac{\binom{N_A}{k}\binom{N_B}{N_A-k}}{\binom{N_A+N_B}{N_A}}$$
+  
+Nous comprenons dés lors que ce modéle est trés simpliste comparé à la réalité. Mais l'intérêt est surtout de voir au bout de combien de temps nous nous s'approcherons  de l'équilibre.  
+
+Le graphique ci-dessous correspond à une simulation avec $N_A=20, N_B=20$ et $X(0)=20$, c'est à dire que l'état $A$ possédait au départ 20 piéces de $1$ euro qu'elle a fabriqué et 0 piéce de l'état $B$.  
+
+  
+```{r,echo=F}
+
+#fonction mmatrice de transition
+
+makemat=function(N_A,N_B){
+  ro=N_A/N_B
+  matrice=matrix(0,nrow=N_A,ncol=N_A) 
+  matrice[1,2]=ro
+  matrice[1,1]=1-ro
+  matrice[N_A,N_A-1]=1
+  for(i in 1:N_A-1){
+    for(j in 1:N_A-1){
+      if(i==j &i!=1){
+        matrice[i,j]=(1-i/N_A)*(1-ro+2*ro*(i/N_A))
+       matrice[i,j-1]=(i/N_A)*(1-ro+ro*(i/N_A))
+       matrice[i,j+1]=ro*(1-i/N_A)^2
+      }
+      
+        
+      
+    }
+  }
+return(matrice)  
+}
+
+
+matrice=makemat(10,10)
+
+
+pi0=c(0,1,0,0,0,0,0,0,0,0)
+  
+
+
+#mesure invariant
+mesureinv=function(N_A,N_B){
+  pi=vector("double",length=N_A)
+  for(i in 1:N_A){
+    pi[i]=(choose(N_A,i)*choose(N_B,N_A-i))/choose(N_A+N_B,N_A)
+  }
+  pi
+}
+
+inv10=mesureinv(10,14)
+
+# Fonction pour retourner l'historique des probas et le temps de convergence
+
+temp=function(N_A,N_B,initial,imax,arrondi){
+  t=0
+  
+  mat=makemat(N_A,N_B)
+  mesure=mesureinv(N_A,N_B )
+  pi0=vector("double",length=N_A)
+  pi0[initial]=1
+  pi=pi0%*%mat
+  historique=pi
+  # tant que pi different de mesure invariante, faire instructions
+  while(round(pi,arrondi)!=round(mesure,arrondi) && t<imax ){
+    pi=pi%*%mat
+    
+    historique=rbind(historique,pi)
+    t=t+1
+  }
+list(temps=pi,histo=historique,t=t)
+}
+
+```  
+
+```{r,echo=F} 
+mesure=temp(20,20,20,100,10)
+historique=as.data.frame(mesure$histo)
+
+
+historique = historique %>%
+                 gather(key = pi_k,value=probabilite)
+                 
+historique$pi_k=as.factor(historique$pi_k)
+               
+historique=historique %>%
+           group_by(pi_k)%>%
+                 mutate(n=1:n())
+
+ggplot(historique,aes(x=n,y=probabilite,col=pi_k,fill=pi_k,main="Convergence Etats"))+
+   geom_line()+
+ xlab("temp")+
+  theme_calc()
+  
+
+
+```  
+  
+* Nous pouvons constaté que à partir du temp $t=60$ un équilibre commence à se créer, avec $X(t)$ plus problable d'être entre $[8,11]$. Ce qui représente la moitié plus ou moins. 
+
+  
+Le graphique ci-dessous le cas ou $\rho=\frac{1}{2}$, c'est à dire $N_A=10,N_B=20$ et l'état $A$ possédait au départ 10 piéces de $1$ euro qu'elle a fabriqué et 0 piéce de l'état $B$.  
+
+```{r,echo=F} 
+mesure=temp(10,20,10,50,3)
+historique=as.data.frame(mesure$histo)
+
+
+historique = historique %>%
+                 gather(key = pi_k,value=probabilite)
+                 
+historique$pi_k=as.factor(historique$pi_k)
+               
+historique=historique %>%
+           group_by(pi_k)%>%
+                 mutate(n=1:n())
+
+ggplot(historique,aes(x=n,y=probabilite,col=pi_k,fill=pi_k,main="Convergence Etats"))+
+   geom_line()+
+ xlab("temp")+
+  theme_calc()
+
+  
+
+
+
+```   
+  
+  
+* Nous pouvons remarquer avec ce graphique, comparé au cas précedent, que le temps pour atteindre l'équilibre stationnaire est deux fois plus petit. avec $X(t)$ plus problable d'être entre $[2,5]$. Ce qui représente la moitié plus ou moins.   
+  
+• Le graphique ci-dessous represente le cas ou $\rho\approx 0.125$, ce qui est  proche de zéro. C'est à dire $N_A=10,N_B=800$ et l'état $A$ possédait au départ 10 piéces de $1$ euro qu'elle a fabriquée et 0 piéce de l'état $B$. 
+
+  
+```{r,echo=F} 
+mesure=temp(10,800,10,100,50)
+historique=as.data.frame(mesure$histo)
+
+
+historique = historique %>%
+                 gather(key = pi_k,value=probabilite)
+                 
+historique$pi_k=as.factor(historique$pi_k)
+               
+historique=historique %>%
+           group_by(pi_k)%>%
+                 mutate(n=1:n())
+
+ggplot(historique,aes(x=n,y=probabilite,col=pi_k,main="Convergence Etats"))+
+   geom_line()+
+ xlab("temp")+
+  theme(legend.position="none")+
+  theme_calc()
+  
+```   
+  
+* En dépit du fait que la convergence se fait beaucoup plus tôt que précédemment, nous sommes presque sur de la convergence $X(t)=2$ (avec $\approx$ 75% de chance) c'est qui represente environ 10% des  piéces fabriquées par $A$
+  
+Pour  conclure cette partie nous pouvons dire que la valeur de $\rho$ joue sur la vitesse de convergence vers l'équilibre. En effet une valeur de $\rho$ trop proche de zéro entraine une vers convergence beaucoup plus rapide dans le temps contrairement à valeur de $\rho$ proche de 1 ( $N_A$ pas trop différent de $N_B$) . 
+    
+### Cas particulier 
+
+Dans cette partie nous allons un deuxiéme modéle possible. Nous considérons $N_A=N$ et les piéces fabriquées par l'états  sont reconnus par leurs numéros de fabrications.  
+L'idée étant que à chaque instant $t$  une piéce parmi celles fabriquées par l'état $A$ est prie de maniére uniforme et change automatiquement de pays. la différence par rapport au modéle d'avant se base sur le fait que un seul pays ici est fabriquant des piéces. le but ici sera aussi voir au  bout de combien de temps pourrions atteindre un équilibre. Ce modéle prend en compte le fait que en réalité les échanges ne se font pas forcément de maniére simultanée.  
+  
+* Soit l'état $X(t)=k$ ,avec $k \in$ [1,N-1]:  
+
+  
+Si $X(t+1)=k-1$ alors  la piéce tirée était dans A (avec probabilité $\frac{k}{N}$).  
+Si $X(t+1)=k+1$ alors la piéce tirée était dans B (avec probabilité $\frac{N-k}{K}$).
+Si $k=0$ alors forcément $X(t+1)=1$ ou $k=N$ alors forcément $X(t+1)=N-1$.  
+De ce fait:  
+  
+$$   
+P=\left \{
+  \begin{array}{rcr}
+  r_k=&\mathbb{P}(X(t+1)=k|X(t)=k)=&0\\
+  p_k=&\mathbb{P}(X(t+1)=k+1|X(t)=k)=&\frac{N-k}{N}\\
+  q_k=& \mathbb{P}(X(t+1)=k-1|X(t)=k)=& \frac{k}{N}\\
+\end{array}
+\right.
+$$ 
+
+Comme précédemment les $X(t+1)$ (pour $t \in$ [0,N-1] ) ne dépendent que de $X(t)$. Donc nous avons une chaine de markov irréductible récurrente positive  de matrice P.  
+
+En reprenant la mesure invariant $\pi_k$ nous obtenons:  
+  
+$$\pi_k=\frac{p_{k-1}....p_0}{q_{k}....q_1}\pi_0=
+\frac{\prod_0^k(\frac{N-k'+1}{N})}{\prod_1^k(\frac{k'}{N})}\pi0=\binom{N}{k}\pi_0\\$$
+  
+Donc : $$\sum_0^N\binom{N}{k}\pi_0=1 \Rightarrow \pi_0(1+1)^N=1 \\
+\Rightarrow \pi_k=\binom{N}{k}\frac{1}{2^N}=\binom{N}{k}(\frac{1}{2})^k(\frac{1}{2})^{N-k} $$.
+  
+Sachant X(t) est de loi $\pi$ , nous pouvons dire que $X(t) \sim \mathcal{B}in(N,\frac{1}{2})$. D'ailleurs il sagit particuliérement d'une marche aléatoire de $N \in \mathbb{N}$  
+  
+  
+Le graphique ci-dessous represente un simulation du modéle avec $N=10$.   
+  
+
+  
+```{r,echo=F}
+# fonction pour matrice de transition deuxiéme modéle
+makemat2=function(N_A){
+  matrice=matrix(0,nrow=N_A,ncol=N_A) 
+  matrice[1,2]=1
+  matrice[N_A,N_A-1]=1
+  for(i in 1:N_A-1){
+    for(j in 1:N_A-1){
+      if(i==j &i!=1){
+       matrice[i,j-1]=i/N_A
+       matrice[i,j+1]=(1-i/N_A)
+      }
+      
+        
+      
+    }
+  }
+return(matrice)  
+}
+
+matrice1=makemat2(20)
+
+#mesure invariant 2
+mesureinv2=function(N_A){
+  pi=vector("double",length=N_A)
+  for(i in 1:N_A){
+    pi[i]=(choose(N_A,i)*(1/2)^N_A)
+  }
+  pi
+}
+mesure1=mesureinv2(10)
+
+temp1=function(N_A,initial,imax,arrondi){
+  t=0
+  mat=makemat2(N_A)
+  mesure=mesureinv2(N_A )
+  pi0=vector("double",length=N_A)
+  pi0[initial]=1
+  pi=pi0%*%mat
+  historique=pi
+  # tant que pi different de mesure invariante, faire instructions
+  while(round(pi,arrondi)!=round(mesure,arrondi) && t<imax ){
+    pi=pi%*%mat
+    
+    historique=rbind(historique,pi)
+    t=t+1
+  }
+list(temps=pi,histo=historique,t=t)
+}
+
+mesure1=temp1(10,1,50,50)
+
+historique1=as.data.frame(mesure1$histo)
+
+
+historique1 = historique1 %>%
+                 gather(key = pi_k,value=probabilite)
+                 
+historique1$pi_k=as.factor(historique1$pi_k)
+               
+historique1=historique1 %>%
+           group_by(pi_k)%>%
+                 mutate(n=1:n())
+
+ggplot(historique1,aes(x=n,y=probabilite,col=pi_k,main="Convergence Etats",alpha=pi_k))+
+   geom_line()+
+ xlab("temp")+
+  theme(legend.position="none")+
+  theme_calc()+
+ scale_color_discrete()
+  
+```
+
+  
+  
+  
+  
+  
+* Nous pouvons observer  que X(t) ne converge pas spécialement . Mais que toutefois on observe des sauts particuliément autour de $\frac{N}{2}$ . Ce qui correspond à l'obtention d'un régime stationnaire au bout d'un certain temps.  
+  
+# Processus aléatoire à temps discret  
+
+Nous considérons le premier modéle étudié.  
+soit:  $$ \pi_k \approx \frac{\binom{N_A}{k}\binom{N_B}{N_A-k}}{\binom{N_A+N_B}{N_A}} $$  
+et $$X(t) \rightarrow \pi $$
+nous posons $\Lambda(t) =\frac{X(t)}{N_A}$ et $\lambda(t)=\mathbb{E}(\Lambda(t))$  
+$$\mathbb{E}[X(t+1)]=\sum_{k=0}^{N_A}kP(X(t+1)=k)$$\
+$$P(X(t+1)=k)=\sum_{i \in [k-1,k+1]} P(X(t+1)=k|X(t)=i)P(X(t)=i) $$\
+$$\mathbb{E}(X(t+1))=\sum_0^{N_A}k\sum_{i \in [k-1,k+1]} P(X(t+1)=k|X(t)=i)P(X(t)=i)$$\
+$$= \sum_0^{N_A}k P_{k,k}P_k+\sum_0^{N_A}kP_{k-1,k}P_{k-1} + \sum_{0}^{N_A}kP_{k+1,k}P_{k+1}$$\
+$$= \sum_0^{N_A}k P_{k,k}P_k+\sum_1^{N_A}kP_{k-1,k}P_{k-1}+\sum_{0}^{N_A-1}kP_{k+1,k}P_{k+1}$$\
+$$=\sum_0^{N_A}k P_{k,k}P_k+\sum_0^{N_A}(k+1)P_{k,k+1}P_{k}+\sum_{0}^{N_A}(k-1)P_{k,k}P_{k}$$\
+$$=\sum_0^{N_A}P_k(kP_{k,k} +(k+1)P_{k,k+1}+ (k-1)P_{k,k-1})$$\
+$$=\sum_0^{N_A}P_k (k(P_{k,k}+P_{k,k+1}+P_{k,k-1}) +P_{k,k+1}-P_{k,k-1})$$\
+$$=\sum_0^{N_A}P_k(k+ P_{k,k+1}-P_{k,k-1})$$\
+$$=\sum_0^{N_A}P_k(k+\rho -\frac{k}{N_A}-\frac{k}{N_B})$$\
+$$= \sum_0^{N_A}kP_k -\frac{1+\rho}{N_A}\sum_0^{N_A}kP_k +\rho\sum_0^{N_A}P_k$$\
+$$=\mathbb{E}[X(t)]-\frac{1+\rho}{N_A}\mathbb{E}[X(t)]+ \rho $$\
+$$\mathbb{E}[X(t+1)]=\mathbb{E}[X(t)](1-\frac{1+\rho}{N_A}) +\rho$$\
+$$\Longleftrightarrow  \mathbb{E}[\frac{X(t+1)}{N_A}]=\mathbb{E}[\frac{X(t)}{N_A}](1- \frac{1+\rho}{N_A} ) +\frac{\rho}{N_A} $$\
+$$\Longleftrightarrow \lambda(t+1)=\lambda(t)(1-\frac{1+\rho}{N_A}) +\frac{\rho}{N_A} $$
+or $\lambda(t)=\mathbb{E}(\Lambda(t))=\frac{1}{N_A}\mathbb{E}(X(t))=\frac{N_A}{N_A+N_B}$
+Avec $\lambda(t)$ vérifiant la relation de récurrence suivante:  
+$$\lambda(t+1)=\lambda(t)(1-\frac{1+\rho}{N_A})+\frac{\rho}{N_A}$$
+  
+  
+• Simulation de $\lambda$ , pour $N_A=N_B$ (c'est à dire $\rho=1$) avec $X(0)=99$ et $X(0)=0$
+
+  
+```{r,echo=F}
+#simulation Lambda
+
+simul=function(N_A,N_B,t,lambda0){
+  lambda=lambda0/N_A
+  rho=N_A/N_B
+  vect=vector("double",length=t)
+  vect[1]=lambda
+  for(i in 2:t){
+    vect[i]=lambda*(1-(1+rho)/N_A)+rho/N_A
+    lambda=vect[i]  
+  }
+  vect=cbind(vect,n=1:length(vect))
+}
+
+f=simul(100,100,1000,99)
+f1=simul(100,100,1000,0)
+fam=as.data.frame(f)
+names(fam)=c("lambda_NA-1","n")
+fam1=as.data.frame(f1)  
+fam=fam %>%
+     mutate(lambda_0=fam1$vect)%>%
+     gather(key=Vect,value =valeur,-n )%>%
+  tbl_df()
+
+fam$Vect=as.factor(fam$Vect)
+
+ggplot(fam,aes(x=n,y=valeur,col=Vect))+
+  geom_line()+
+  theme_calc()+
+  ylab("lambda")+
+    geom_hline(yintercept =1/2,alpha=0.2,show.legend = T,col="green")
+
+  
+  
+ 
+```
+  
+  
+  
+* Nous pouvons observer que lambda, l'espérance de la proportion des piéces de $A$ dans $A$ convergent vers $\frac{N_A}{N_A+N_B}=0.5$ (à partir de *t* environ à 250 ) 
+  
+\newpage  
+
+• Simulation de $\lambda$ , pour $N_A \leq N_B$  ( c'est à dire $\rho \approx 0$) avec $X(0)=N_A-1$ et $X(0)=0$  
+  
+  
+```{r,echo= F}  
+f=simul(30,500,1000,29)
+f1=simul(30,500,1000,0)
+
+fam=as.data.frame(f)
+names(fam)=c("lambda_NA-1","n")
+fam1=as.data.frame(f1)  
+fam=fam %>%
+     mutate(lambda_0=fam1$vect)%>%
+     gather(key=Vect,value =valeur,-n )%>%
+  tbl_df()
+
+fam$Vect=as.factor(fam$Vect)
+
+ggplot(fam,aes(x=n,y=valeur,col=Vect))+
+  geom_line()+
+  theme_calc()+
+  ylab("lambda")+
+    geom_hline(yintercept =30/500,alpha=0.2,show.legend = T,col="green")
+```  
+  
+  
+* Nous pouvons voir comme précedemment, une convergence de $\lambda$ vers $\frac{N_A}{N_A+N_B}$. Nous pouvons souligner le fait que la convergence est plus rapide quand $\rho$ est proche $0$  
+  
+  
+En utilisant le relation de récurrence de $\lambda(t+1)$  dans le cas $N_A=N_B$ nous obtenons :  
+$$\Lambda(t+1)=\frac{1}{N} + (1-\frac{2}{N})\Lambda(t)+\frac{\sqrt[]{2\Lambda(t)(1-\Lambda(t))}}{N}\epsilon_{t+1}$$
+Avec $\epsilon_t+1 \sim \mathcal{N}(0,1)$ le bruit au temps $t+1$  
+Sachant que $\lambda(t+1) \Rightarrow \frac{1}{2}$ , pour centrer $\Lambda(t+1)$ On pose : $$H(t)=\Lambda(t)-\frac{1}{2}
+\Longleftrightarrow H(t+1)=\Lambda(t+1)-\frac{1}{2}$$
+$$=\frac{1}{N} +(1-\frac{2}{N})H(t) +\frac{1}{2} -\frac{1}{N} +\frac{\sqrt[]{(2(H(t)+\frac{1}{2})(\frac{1}{2}-H(t))} }{N}\epsilon_{t+1}$$
+$$=\frac{1}{2}+ (1-\frac{2}{N})H(t)   +\frac{\sqrt[]{(2(-H(t)^2)+\frac{1}{4}) }}{N}\epsilon_{t+1}$$
+$$=\frac{1}{2}+ (1-\frac{2}{N})H(t)   +\frac{\sqrt[]{(2(-H(t)^2)+\frac{1}{4}) }}{N}\epsilon_{t+1}$$
+  
+  
+Sachant quand que $H(t)$ proche de $0$ :  
+  
+$$\Longleftrightarrow \Lambda(t+1) \approx \frac{1}{2}+(1-\frac{2}{N})H(t)+\frac{1}{\sqrt{2}N}\epsilon_{t+1}$$
+$$ \Longleftrightarrow H(t+1) \approx (1-\frac{2}{N})H(t) +\frac{1}{\sqrt{2}N}\epsilon_{t+1}  $$
+  
+  
+En supposant que les $\epsilon_i$ soit iid ,  
+
+  
+$$Y(t+1)=aY(t)+\sigma \epsilon_{t+1}$$  
+Dans ce cas nous obtiendrons un régime stationnaire (comme dans le **Cas Particulier** ).  
+Et dans ce cas pour tout $t \in \mathbb{N}, H(t) \rightarrow \mathcal{N}(0,\frac{1}{8N}))$.
+
+• Simulation de $H(t)$ en fonction de $N$  
+
+```{r,echo=FALSE}  
+simul2=function(N,t){
+  X_0=N-1
+lambda_0=X_0/N-1/2
+vect=vector("double",length=t+1)
+lambda_t=lambda_0
+vect[1]=lambda_t  
+H_t=lambda_t-1/2
+for(i in 2:t+1){
+
+  vect[i]=(1-2/N)*H_t + 1/(N*sqrt(2))*rnorm(1,mean=0,sd=1)
+  H_t=vect[i]
+} 
+ vect =tbl_df(cbind(H_t=vect,t=0:t))  
+} 
+f1=simul2(10,5000)
+f2=simul2(100,5000)
+f3=simul2(1000,5000)
+f4=simul2(10000,5000)
+f=tbl_df(cbind(t=f1$t,N10=f1$H_t,N100=f2$H_t,N1000=f3$H_t,N10000=f4$H_t))%>%
+          gather(key=quantite,value=H_t,-t)
+f$quantite=as.factor(f$quantite)
+
+ggplot(f,aes(y=H_t,x=t,col=quantite))+
+  geom_line()+
+  theme_calc()+
+scale_color_brewer()
+```
+  
+* Avec ce graphique nous pouvons voir que l'on obtient un regime stationnaire (c'est dire un sentier stable dans le processus) , avec un écart-type $\sigma$ qui décroit fortement avec $N$ (qui augmente ). Nous pouvons néanmoins noté que la stabilité dans le processus est plus garantit (dans le long terme ) par $N$ assez grand.  
+  
+# Conclusion  
+ 
+Pour conclure nous pouvons dire qu'à travers les modéles présentés, l'équilibre recherché n'est pas forcément atteint. Toutefois modéles guarantit un régime stationnaire autour  du point de convergence. Ce régime stationnaire serait dû à un déséquilibre causé par les bruits corrélés ( à chaque $t$). Nous avons pû constater néanmoins que une différence grande en quantité de monnaie fabriquée par deux pays, converge non seulement plutôt vers la mesure invariante. Mais aussi donne régime stationnaire dans lequel la dispersion est beaucoup moins forte. Nous pouvons souligner cette faible dispersion  dans le cas ou la masse monétaire dans les deux pays  est trés grande. Toutefois ce modéle ne prend pas en compte ni le type de masse monétaire ni  les differences que peuvent avoir deux pays.  Il ne prend aussi pas en compte le décalage inter-temporels dans les échanges qui fait que la masse monétaire globale varie aussi dans le temps.  
+
+
+# Code
+  
+    
+```{r,echo=TRUE,eval=F}
+  
+library(ggplot2)
+library(magrittr)
+library(rmarkdown)
+library(dplyr)
+library(tidyr)
+library(RColorBrewer)
+library(reshape2)
+library(ggthemes)
+library(MASS)
+library(viridis)
+library(GSIF)
+library(ggtern)
+library(geomnet)
+library(ggmap)
+library(ggfortify)
+library(vars)
+library(maps)
+library(rgdal)
+library(animation)
+library(class)
+library(combinat)
+library(grDevices)
+library(markovchain)
+library(igraph)
+library(diagram)
+library(stringr)  
+
+#fonction mmatrice de transition
+makemat=function(N_A,N_B){
+  ro=N_A/N_B
+  matrice=matrix(0,nrow=N_A,ncol=N_A) 
+  matrice[1,2]=ro
+  matrice[1,1]=1-ro
+  matrice[N_A,N_A-1]=1
+  for(i in 1:N_A-1){
+    for(j in 1:N_A-1){
+      if(i==j &i!=1){
+        matrice[i,j]=(1-i/N_A)*(1-ro+2*ro*(i/N_A))
+       matrice[i,j-1]=(i/N_A)*(1-ro+ro*(i/N_A))
+       matrice[i,j+1]=ro*(1-i/N_A)^2
+      }
+      
+        
+      
+    }
+  }
+return(matrice)  
+}
+
+
+matrice=makemat(10,10)
+
+
+pi0=c(0,1,0,0,0,0,0,0,0,0)
+  
+
+
+#mesure invariant
+mesureinv=function(N_A,N_B){
+  pi=vector("double",length=N_A)
+  for(i in 1:N_A){
+    pi[i]=(choose(N_A,i)*choose(N_B,N_A-i))/choose(N_A+N_B,N_A)
+  }
+  pi
+}
+
+inv10=mesureinv(10,14)
+
+# fonction qui retourne un vecteur de  mesure à  chaque temps t 
+temp=function(N_A,N_B,initial,imax,iteration){
+  t=0
+  mat=makemat(N_A,N_B)
+  mesure=mesureinv(N_A,N_B )
+  pi0=vector("double",length=N_A)
+  pi0[initial]=1
+  pi=pi0%*%mat
+  historique=pi
+  # tant que pi different de mesure invariante, faire instructions
+  while(round(pi,iteration)!=round(mesure,iteration) && t<imax ){
+    pi=pi%*%mat
+    
+    historique=rbind(historique,pi)
+    t=t+1
+  }
+list(temps=pi,histo=historique,t=t)
+}
+
+mesure=temp(10,14,10,200)
+historique=as.data.frame(mesure$histo)
+historique
+round(inv10,7)
+round(mesure$temps,3)
+mesure$t
+historique = historique %>%
+                 gather(key = Etats,value=mesure)
+                 
+historique$Etats=as.factor(historique$Etats)
+               
+historique=historique %>%
+           group_by(Etats)%>%
+                 mutate(n=1:n())
+
+# Graphique convergence pi
+ggplot(historique,aes(x=n,y=mesure,col=Etats,main="Convergence Etats"))+
+   geom_line()+
+ xlab("temp")+
+  theme_calc()
+mesure=temp(20,20,20,100,10)
+historique=as.data.frame(mesure$histo)
+
+historique = historique %>%
+                 gather(key = pi_k,value=probabilite)
+                 
+historique$pi_k=as.factor(historique$pi_k)
+               
+historique=historique %>%
+           group_by(pi_k)%>%
+                 mutate(n=1:n())
+
+# Graphique convergence pi
+ggplot(historique,aes(x=n,y=probabilite,col=pi_k,fill=pi_k,main="Convergence Etats"))+
+   geom_line()+
+ xlab("temp")+
+  theme_calc()
+
+# fonction pour matrice de transition (cas particulier)
+makemat2=function(N_A){
+  matrice=matrix(0,nrow=N_A,ncol=N_A) 
+  matrice[1,2]=1
+  matrice[N_A,N_A-1]=1
+  for(i in 1:N_A-1){
+    for(j in 1:N_A-1){
+      if(i==j &i!=1){
+       matrice[i,j-1]=i/N_A
+       matrice[i,j+1]=(1-i/N_A)
+      }
+      
+        
+      
+    }
+  }
+return(matrice)  
+}
+
+
+matrice1=makemat2(20)
+
+
+#mesure invariant 2 (cas partiulier)
+mesureinv2=function(N_A){
+  pi=vector("double",length=N_A)
+  for(i in 1:N_A){
+    pi[i]=(choose(N_A,i)*(1/2)^N_A)
+  }
+  pi
+}
+mesure1=mesureinv2(10)
+
+temp1=function(N_A,initial,imax,arrondi){
+  t=0
+  mat=makemat2(N_A)
+  mesure=mesureinv2(N_A )
+  pi0=vector("double",length=N_A)
+  pi0[initial]=1
+  pi=pi0%*%mat
+  historique=pi
+  # tant que pi different de mesure invariante, faire instructions
+  while(round(pi,arrondi)!=round(mesure,arrondi) && t<imax ){
+    pi=pi%*%mat
+    
+    historique=rbind(historique,pi)
+    t=t+1
+  }
+list(temps=pi,histo=historique,t=t)
+}
+
+mesure1=temp1(10,1,50,50)
+
+historique1=as.data.frame(mesure1$histo)
+
+
+historique1 = historique1 %>%
+                 gather(key = pi_k,value=probabilite)
+                 
+historique1$pi_k=as.factor(historique1$pi_k)
+               
+historique1=historique1 %>%
+           group_by(pi_k)%>%
+                 mutate(n=1:n())
+
+ggplot(historique1,aes(x=n,y=probabilite,col=pi_k,main="Convergence Etats",alpha=pi_k))+
+   geom_line()+
+ xlab("temp")+
+  theme(legend.position="none")+
+  theme_calc()+
+ scale_color_discrete()  
+  
+#simulation Lambda
+
+simul=function(N_A,N_B,t,lambda0){
+  lambda=lambda0/N_A
+  rho=N_A/N_B
+  vect=vector("double",length=t)
+  vect[1]=lambda
+  for(i in 2:t){
+    vect[i]=lambda*(1-(1+rho)/N_A)+rho/N_A
+    lambda=vect[i]  
+  }
+  vect=cbind(vect,n=1:length(vect))
+}
+
+# Simulation de lambda 1
+
+f=simul(100,100,1000,99)
+f1=simul(100,100,1000,0)
+fam=as.data.frame(f)
+names(fam)=c("lambda_NA-1","n")
+fam1=as.data.frame(f1)  
+fam=fam %>%
+     mutate(lambda_0=fam1$vect)%>%
+     gather(key=Vect,value =valeur,-n )%>%
+  tbl_df()
+
+fam$Vect=as.factor(fam$Vect)
+
+ggplot(fam,aes(x=n,y=valeur,col=Vect))+
+  geom_line()+
+  theme_calc()+
+  ylab("lambda")+
+    geom_hline(yintercept =1/2,alpha=0.2,show.legend = T,col="green")
+
+# Simulation de lambda 2  
+
+f=simul(30,500,1000,29)
+f1=simul(30,500,1000,0)
+
+fam=as.data.frame(f)
+names(fam)=c("lambda_NA-1","n")
+fam1=as.data.frame(f1)  
+fam=fam %>%
+     mutate(lambda_0=fam1$vect)%>%
+     gather(key=Vect,value =valeur,-n )%>%
+  tbl_df()
+
+fam$Vect=as.factor(fam$Vect)
+
+ggplot(fam,aes(x=n,y=valeur,col=Vect))+
+  geom_line()+
+  theme_calc()+
+  ylab("lambda")+
+    geom_hline(yintercept =30/500,alpha=0.2,show.legend = T,col="green")
+
+ # Simulation H_t  
+# fonction qui renvoie un tableau avec t et H(t)
+simul2=function(N,t){
+  X_0=N-1
+lambda_0=X_0/N-1/2
+vect=vector("double",length=t+1)
+lambda_t=lambda_0
+vect[1]=lambda_t  
+H_t=lambda_t-1/2
+for(i in 2:t+1){
+
+  vect[i]=(1-2/N)*H_t + 1/(N*sqrt(2))*rnorm(1,mean=0,sd=1)
+  H_t=vect[i]
+} 
+ vect =tbl_df(cbind(H_t=vect,t=0:t))  
+} 
+f1=simul2(10,5000)
+f2=simul2(100,5000)
+f3=simul2(1000,5000)
+f4=simul2(10000,5000)
+
+
+f=tbl_df(cbind(t=f1$t,N10=f1$H_t,N100=f2$H_t,N1000=f3$H_t,N10000=f4$H_t))%>%
+          gather(key=quantite,value=H_t,-t)
+
+f$quantite=as.factor(f$quantite)
+
+ggplot(f,aes(y=H_t,x=t,col=quantite))+
+  geom_line()+
+  theme_calc()+
+scale_color_brewer()  
+```
